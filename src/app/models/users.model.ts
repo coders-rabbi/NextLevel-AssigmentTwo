@@ -1,41 +1,57 @@
+// users.model.ts
 import { Schema, model } from 'mongoose';
-import { Order, User, UserAddress, UserName } from './users.interface';
+import { TUser, TUserAddress, UserModel, TUserName } from './users.interface';
+import bcrypt from 'bcrypt';
+import config from '../config';
 
-const userNameSchema = new Schema<UserName>({
+const userNameSchema = new Schema<TUserName>({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
 });
 
-const UserAddressSchema = new Schema<UserAddress>({
+const UserAddressSchema = new Schema<TUserAddress>({
   street: { type: String, required: true },
   city: { type: String, required: true },
   country: { type: String, required: true },
 });
 
-const orderSchema = new Schema<Order>({
-  productName: { type: String, required: true },
-  price: { type: Number, required: true },
-  quantity: { type: Number, required: true },
-});
+// const OrderSchema = new Schema<Order>({
+//   productName: { type: String, required: true },
+//   price: { type: Number, required: true },
+//   quantity: { type: Number, required: true },
+// });
 
-const userInfoSchema = new Schema<User>({
+const userInfoSchema = new Schema<TUser, UserModel>({
   userId: { type: Number, required: true },
-  username: { type: String, required: true },
+  username: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   fullName: userNameSchema,
   age: { type: Number, required: true },
   email: { type: String, required: true },
   isActive: {
     type: Boolean,
-    enum: ['true', 'false'],
     default: true,
   },
   hobbies: { type: [String], required: true },
   address: UserAddressSchema,
-  orders: {
-    type: orderSchema,
-    default: [],
-  },
+  // orders: {
+  //   type: [OrderSchema],
+  //   default: [],
+  // },
 });
 
-export const UserModel = model<User>('User', userInfoSchema);
+// this middleware worked before the saved user data
+userInfoSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  user.password = await bcrypt.hash(user.password, Number(config.bcrypt));
+  next();
+});
+
+//pre save middleware
+userInfoSchema.methods.isUserExists = async function (userId: string) {
+  const exsistingUser = await User.findOne({ userId });
+  return exsistingUser;
+};
+
+export const User = model<TUser, UserModel>('User', userInfoSchema);
