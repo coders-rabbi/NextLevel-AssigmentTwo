@@ -34,10 +34,6 @@ const userInfoSchema = new Schema<TUser, UserModel>({
   },
   hobbies: { type: [String], required: true },
   address: UserAddressSchema,
-  // orders: {
-  //   type: [OrderSchema],
-  //   default: [],
-  // },
 });
 
 // this middleware worked before the saved user data
