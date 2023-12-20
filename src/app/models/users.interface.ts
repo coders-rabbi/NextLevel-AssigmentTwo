@@ -29,7 +29,6 @@ export type TUser = {
   isActive: true | false;
   hobbies: string[];
   address: TUserAddress;
-  // orders?: Order[];
 };
 
 export type UserMethods = {
