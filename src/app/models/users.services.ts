@@ -43,9 +43,9 @@ const getASpecificUser = async (id: string) => {
   return result;
 };
 
-// const addAnewOrderService = async (id: string) => {
-//   const quary = await user.
-// };
+const addAnewOrderService = async (id: string) => {
+  const quary = 
+};
 
 const deleteASpecificUser = async (id: string, userData: TUser) => {
   // console.log(id);
