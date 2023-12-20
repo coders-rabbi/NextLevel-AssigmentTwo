@@ -47,16 +47,15 @@ const getASpecificUser = async (id: string) => {
 //   const quary = await user.
 // };
 
-const deleteASpecificUser = async (id: string) => {
+const deleteASpecificUser = async (id: string, userData: TUser) => {
   // console.log(id);
-  const findOne = await User.findOne({ userId: id });
-  if (findOne) {
-    const result = await User.deleteOne({ userId: id });
-    return result;
-  } else {
-    console.log('data not found');
+  const user = new User(userData);
+  const userIdString = String(userData.userId);
+  if (await user.isUserExists(userIdString)) {
+    throw new Error('user not found');
   }
-  return;
+  const result = await User.deleteOne({ userId: id });
+  return result;
 };
 
 export const UserService = {
