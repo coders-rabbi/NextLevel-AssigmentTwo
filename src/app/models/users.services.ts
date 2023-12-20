@@ -44,7 +44,6 @@ const getASpecificUser = async (id: string) => {
 };
 
 const deleteASpecificUser = async (id: string, userData: TUser) => {
-
   // const user = new User(userData); // create an instance
   // const userIdString = String(userData.userId);
   // if (await user.isUserExists(userIdString)) {
@@ -55,9 +54,31 @@ const deleteASpecificUser = async (id: string, userData: TUser) => {
   return result;
 };
 
+const userUpdateService = async (userId: number, updatedUserData: TUser) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { userId: userId },
+      { $set: updatedUserData },
+      { new: true }
+    );
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Omit password field from the returned user data
+    const { password, ...updatedUserWithoutPassword } = user.toObject();
+    return updatedUserWithoutPassword;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
 export const UserService = {
   createUserIntoDB,
   getAllUsers,
   getASpecificUser,
   deleteASpecificUser,
+  userUpdateService,
 };

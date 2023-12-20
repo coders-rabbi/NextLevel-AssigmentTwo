@@ -82,9 +82,33 @@ const deleteAUser = async (req: Request, res: Response) => {
   }
 };
 
+const UserUpdate = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const updatedUserData = req.body;
+
+  try {
+    const updatedUser = await UserService.userUpdateService(
+      Number(userId),
+      updatedUserData
+    );
+    res.json({
+      success: true,
+      message: 'User updated successfully!',
+      data: updatedUser,
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUsers,
   getASpecificUser,
   deleteAUser,
+  UserUpdate,
 };
