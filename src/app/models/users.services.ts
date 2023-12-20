@@ -14,6 +14,7 @@ const createUserIntoDB = async (userData: TUser) => {
 
   const result = await user.save(); // user create using instance method
   // response without password newly created user
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password, ...userWithoutPassword } = result.toObject();
   return userWithoutPassword;
 };
@@ -43,7 +44,7 @@ const getASpecificUser = async (id: string) => {
   return result;
 };
 
-const deleteASpecificUser = async (id: string, userData: TUser) => {
+const deleteASpecificUser = async (id: string) => {
   // const user = new User(userData); // create an instance
   // const userIdString = String(userData.userId);
   // if (await user.isUserExists(userIdString)) {
@@ -66,7 +67,7 @@ const userUpdateService = async (userId: number, updatedUserData: TUser) => {
       throw new Error('User not found');
     }
 
-    // Omit password field from the returned user data
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...updatedUserWithoutPassword } = user.toObject();
     return updatedUserWithoutPassword;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
