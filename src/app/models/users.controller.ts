@@ -20,7 +20,7 @@ const createUser = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: err.message || 'Users already exist!',
-      data: null
+      data: null,
     });
   }
 };

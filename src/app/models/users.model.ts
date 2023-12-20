@@ -1,6 +1,6 @@
 // users.model.ts
 import { Schema, model } from 'mongoose';
-import { TUser, TUserAddress, UserModel, TUserName } from './users.interface';
+import { TUser, TUserAddress, UserModel, TUserName, UserMethods } from './users.interface';
 import bcrypt from 'bcrypt';
 import config from '../config';
 
@@ -21,7 +21,7 @@ const UserAddressSchema = new Schema<TUserAddress>({
 //   quantity: { type: Number, required: true },
 // });
 
-const userInfoSchema = new Schema<TUser, UserModel>({
+const userInfoSchema = new Schema<TUser, UserModel, UserMethods>({
   userId: { type: Number, required: true },
   username: { type: String, unique: true, required: true },
   password: { type: String, required: true },

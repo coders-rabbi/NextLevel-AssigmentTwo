@@ -43,17 +43,14 @@ const getASpecificUser = async (id: string) => {
   return result;
 };
 
-const addAnewOrderService = async (id: string) => {
-  const quary = 
-};
-
 const deleteASpecificUser = async (id: string, userData: TUser) => {
-  // console.log(id);
-  const user = new User(userData);
-  const userIdString = String(userData.userId);
-  if (await user.isUserExists(userIdString)) {
-    throw new Error('user not found');
-  }
+
+  // const user = new User(userData); // create an instance
+  // const userIdString = String(userData.userId);
+  // if (await user.isUserExists(userIdString)) {
+  //   throw new Error('User already exists');
+  // }
+
   const result = await User.deleteOne({ userId: id });
   return result;
 };
@@ -62,6 +59,5 @@ export const UserService = {
   createUserIntoDB,
   getAllUsers,
   getASpecificUser,
-  // addAnewOrderService,
   deleteASpecificUser,
 };
