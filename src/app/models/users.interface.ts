@@ -17,7 +17,6 @@ export type TOrder = {
   productName: string;
   price: number;
   quantity: number;
-  userId: number;
 };
 
 export type TUser = {

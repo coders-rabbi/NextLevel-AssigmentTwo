@@ -72,25 +72,6 @@ const userUpdateService = async (userId: number, updatedUserData: string) => {
   }
 };
 
-const testOrderCreation = async (userId: number, orderData: string) => {
-  const id = userId;
-  try {
-    const updatedOrder = await OrderModel.findOneAndUpdate(
-      { userId: id },
-      { $addToSet: { orders: orderData } },
-      { new: true }
-    );
-
-    if (!updatedOrder) {
-      throw new Error('User not found');
-    }
-
-    return updatedOrder;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-};
-
 // const createAOrderService = async (id: number, orderInfo: TOrder) => {
 //   console.log(orderInfo);
 //   try {
@@ -110,22 +91,23 @@ const testOrderCreation = async (userId: number, orderData: string) => {
 const createAOrderService = async (userId: number, orderInfo: TOrder) => {
   console.log(orderInfo);
   try {
-    const existingUser = await OrderModel.findOne({ userId: userId });
+    const existingUser = await User.findOne({ userId: userId });
 
-    if (existingUser && existingUser.orders) {
-      // If 'orders' property exists, append the new order
-      existingUser.orders.push(orderInfo);
-      const result = await existingUser.save();
-      return result;
-    } else {
-      // If 'orders' property doesn't exist, create it as an array and add the new order
-      const result = await OrderModel.findOneAndUpdate(
-        { userId: userId },
-        { $set: { orders: [orderInfo] } },
-        { upsert: true, new: true }
-      );
-      return result;
+    if (!existingUser) {
+      throw new Error('Use Not Found');
     }
+
+    if (!existingUser.orders) {
+      existingUser.orders = [];
+    }
+    existingUser.orders.push({
+      productName: orderInfo.productName,
+      price: orderInfo.price,
+      quantity: orderInfo.quantity,
+    });
+
+    await existingUser.save();
+    return null;
   } catch (error) {
     console.log('Something went wrong:', error);
   }
@@ -138,5 +120,4 @@ export const UserService = {
   deleteASpecificUser,
   userUpdateService,
   createAOrderService,
-  testOrderCreation,
 };

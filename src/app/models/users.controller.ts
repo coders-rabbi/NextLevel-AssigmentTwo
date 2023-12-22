@@ -111,36 +111,11 @@ const orderCreateController = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const orderData = req.body;
   try {
-    const updatedUser = await UserService.createAOrderService(
-      Number(userId),
-      orderData
-    );
+    await UserService.createAOrderService(Number(userId), orderData);
     res.json({
       success: true,
       message: 'Order Created successfully!',
-      data: updatedUser,
-    });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    res.status(404).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-const TestorderCreateController = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  const orderData = req.body;
-  try {
-    const updatedUser = await UserService.testOrderCreation(
-      Number(userId),
-      orderData
-    );
-    res.json({
-      success: true,
-      message: 'Order Created successfully!',
-      data: updatedUser,
+      data: null,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -158,5 +133,4 @@ export const UserControllers = {
   deleteAUser,
   UserUpdate,
   orderCreateController,
-  TestorderCreateController,
 };
