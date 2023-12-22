@@ -1,5 +1,5 @@
-import { User } from './users.model';
-import { TUser } from './users.interface';
+import { OrderModel, User } from './users.model';
+import { TOrder, TUser } from './users.interface';
 // import { string } from 'zod';
 
 const createUserIntoDB = async (userData: TUser) => {
@@ -14,7 +14,7 @@ const createUserIntoDB = async (userData: TUser) => {
 
   const result = await user.save(); // user create using instance method
   // response without password newly created user
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const { password, ...userWithoutPassword } = result.toObject();
   return userWithoutPassword;
 };
@@ -55,24 +55,79 @@ const deleteASpecificUser = async (id: string) => {
   return result;
 };
 
-const userUpdateService = async (userId: number, updatedUserData: TUser) => {
-  try {
-    const user = await User.findOneAndUpdate(
-      { userId: userId },
-      { $set: updatedUserData },
-      { new: true }
-    );
+const userUpdateService = async (userId: number, updatedUserData: string) => {
+  const id = userId;
 
+  try {
+    const user = await User.findOne({ userId: id }, { updatedUserData });
     if (!user) {
       throw new Error('User not found');
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     const { password, ...updatedUserWithoutPassword } = user.toObject();
     return updatedUserWithoutPassword;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     throw new Error(error.message);
+  }
+};
+
+const testOrderCreation = async (userId: number, orderData: string) => {
+  const id = userId;
+  try {
+    const updatedOrder = await OrderModel.findOneAndUpdate(
+      { userId: id },
+      { $addToSet: { orders: orderData } },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      throw new Error('User not found');
+    }
+
+    return updatedOrder;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+// const createAOrderService = async (id: number, orderInfo: TOrder) => {
+//   console.log(orderInfo);
+//   try {
+//     const result = await OrderModel.updateOne(
+//       { userId: id },
+//       {
+//         $addToSet: { orders: orderInfo },
+//       },
+//       { upsert: true, new: true }
+//     );
+//     return result;
+//   } catch (error) {
+//     console.log('Something went wrong!', error);
+//   }
+// };
+
+const createAOrderService = async (userId: number, orderInfo: TOrder) => {
+  console.log(orderInfo);
+  try {
+    const existingUser = await OrderModel.findOne({ userId: userId });
+
+    if (existingUser && existingUser.orders) {
+      // If 'orders' property exists, append the new order
+      existingUser.orders.push(orderInfo);
+      const result = await existingUser.save();
+      return result;
+    } else {
+      // If 'orders' property doesn't exist, create it as an array and add the new order
+      const result = await OrderModel.findOneAndUpdate(
+        { userId: userId },
+        { $set: { orders: [orderInfo] } },
+        { upsert: true, new: true }
+      );
+      return result;
+    }
+  } catch (error) {
+    console.log('Something went wrong:', error);
   }
 };
 
@@ -82,4 +137,6 @@ export const UserService = {
   getASpecificUser,
   deleteASpecificUser,
   userUpdateService,
+  createAOrderService,
+  testOrderCreation,
 };

@@ -6,8 +6,9 @@ import { userSchemaValidation } from './users.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const { User: userData } = req.body;
-    const zodValidation = userSchemaValidation.parse(userData);
+    const user = req.body;
+    console.log(user);
+    const zodValidation = userSchemaValidation.parse(user);
     //will call service function to send this data
     const result = await UserService.createUserIntoDB(zodValidation);
     //send response
@@ -16,7 +17,7 @@ const createUser = async (req: Request, res: Response) => {
       message: 'User created successfully!',
       data: result,
     });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     res.status(500).json({
       success: false,
@@ -106,10 +107,56 @@ const UserUpdate = async (req: Request, res: Response) => {
   }
 };
 
+const orderCreateController = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const orderData = req.body;
+  try {
+    const updatedUser = await UserService.createAOrderService(
+      Number(userId),
+      orderData
+    );
+    res.json({
+      success: true,
+      message: 'Order Created successfully!',
+      data: updatedUser,
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const TestorderCreateController = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const orderData = req.body;
+  try {
+    const updatedUser = await UserService.testOrderCreation(
+      Number(userId),
+      orderData
+    );
+    res.json({
+      success: true,
+      message: 'Order Created successfully!',
+      data: updatedUser,
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUsers,
   getASpecificUser,
   deleteAUser,
   UserUpdate,
+  orderCreateController,
+  TestorderCreateController,
 };

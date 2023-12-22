@@ -13,6 +13,7 @@ const addressSchemaValidation = z.object({
 });
 
 const orderSchemaValidation = z.object({
+  userId: z.number(),
   productName: z.string(),
   price: z.number(),
   quantity: z.number(),

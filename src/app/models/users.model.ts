@@ -1,6 +1,13 @@
 // users.model.ts
 import { Schema, model } from 'mongoose';
-import { TUser, TUserAddress, UserModel, TUserName, UserMethods } from './users.interface';
+import {
+  TUser,
+  TUserAddress,
+  UserModel,
+  TUserName,
+  UserMethods,
+  TOrder,
+} from './users.interface';
 import bcrypt from 'bcrypt';
 import config from '../config';
 
@@ -15,12 +22,6 @@ const UserAddressSchema = new Schema<TUserAddress>({
   country: { type: String, required: true },
 });
 
-// const OrderSchema = new Schema<Order>({
-//   productName: { type: String, required: true },
-//   price: { type: Number, required: true },
-//   quantity: { type: Number, required: true },
-// });
-
 const userInfoSchema = new Schema<TUser, UserModel, UserMethods>({
   userId: { type: Number, required: true },
   username: { type: String, unique: true, required: true },
@@ -34,6 +35,15 @@ const userInfoSchema = new Schema<TUser, UserModel, UserMethods>({
   },
   hobbies: { type: [String], required: true },
   address: UserAddressSchema,
+  orders: { type: [String], required: true},
+});
+
+//order Schema
+const OrderSchema = new Schema<TOrder>({
+  userId: { type: Number, required: true },
+  productName: { type: String, required: true },
+  price: { type: Number, required: true },
+  quantity: { type: Number, required: true },
 });
 
 // this middleware worked before the saved user data
@@ -51,3 +61,4 @@ userInfoSchema.methods.isUserExists = async function (userId: string) {
 };
 
 export const User = model<TUser, UserModel>('User', userInfoSchema);
+export const OrderModel = model<TOrder>('Order', OrderSchema);
