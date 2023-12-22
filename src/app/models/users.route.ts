@@ -7,8 +7,9 @@ const router = express.Router();
 router.post('/', UserControllers.createUser);
 router.get('/', UserControllers.getAllUsers);
 router.get('/:userId', UserControllers.getASpecificUser);
-router.delete('/:userId', UserControllers.deleteAUser);
+router.get('/:userId/orders', UserControllers.getASpecificOrdersController);
 router.put('/:userId', UserControllers.UserUpdate);
-router.put('/:userId/orders', UserControllers.orderCreateController)
+router.put('/:userId/orders', UserControllers.orderCreateController);
+router.delete('/:userId', UserControllers.deleteAUser);
 
 export const UserRoutes = router;

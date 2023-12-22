@@ -1,4 +1,4 @@
-import { OrderModel, User } from './users.model';
+import { User } from './users.model';
 import { TOrder, TUser } from './users.interface';
 // import { string } from 'zod';
 
@@ -72,21 +72,19 @@ const userUpdateService = async (userId: number, updatedUserData: string) => {
   }
 };
 
-// const createAOrderService = async (id: number, orderInfo: TOrder) => {
-//   console.log(orderInfo);
-//   try {
-//     const result = await OrderModel.updateOne(
-//       { userId: id },
-//       {
-//         $addToSet: { orders: orderInfo },
-//       },
-//       { upsert: true, new: true }
-//     );
-//     return result;
-//   } catch (error) {
-//     console.log('Something went wrong!', error);
-//   }
-// };
+const getAspecificOrderIntoDB = async (id: string) => {
+  try {
+    const user = await User.findOne({ userId: id }, { orders: 1 });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+    const { _id, ...updatedUserWithoutPassword } = user.toObject();
+    return updatedUserWithoutPassword;
+  } catch (err) {
+    console.log('something went wrong');
+  }
+};
 
 const createAOrderService = async (userId: number, orderInfo: TOrder) => {
   console.log(orderInfo);
@@ -120,4 +118,5 @@ export const UserService = {
   deleteASpecificUser,
   userUpdateService,
   createAOrderService,
+  getAspecificOrderIntoDB,
 };
